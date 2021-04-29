@@ -1,0 +1,39 @@
+<section>
+    <div class="container">
+        
+        <table class="table mt-5">
+  <thead>
+    <tr>
+      <th scope="col">Number</th>
+      <th scope="col">Title</th>
+      <th scope="col">Category</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th scope="col">image</th>
+      <th scope="col" class="text-right">Update</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each products}}
+    <tr>
+      <th scope="row">1</th>
+      <td>{{this.name}}</td>
+      <td>{{this.category}}</td>
+      <td>{{this.description}}</td>
+      <td>{{this.price}}</td>
+      <td><img style="width:50px;height:80px" src="/images/{{this._id}}.jpg" alt=""></td>
+      <td><a href="/admin/edit-products/{{this._id}}" class="btn btn-primary  ">Edit</a></td>
+      <td><a href="/admin/delete-products/{{this._id}}" class="btn btn-danger  " onclick="return confirm('Do you want to delist {{this.name}}?')">Delete</a></td>
+      
+
+    </tr>
+        {{/each}}
+    
+  </tbody>
+</table>
+        <div class="row mt-4">
+            <a href="/admin/add-products" class="btn btn-success ml-auto ">Add product</a>
+
+        </div>
+    </div>
+</section>
