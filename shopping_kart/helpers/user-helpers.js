@@ -51,6 +51,8 @@ module.exports={
         })
     },
     addToCart:((proId,userId)=>{
+            
+
         return new Promise(async(resolve,reject)=>{
             let userCart=await db.get().collection(collection.CART_COLLECTION).findOne({username:ObjectId(userId)})
             if(userCart){
@@ -106,13 +108,12 @@ module.exports={
     },
     getCartCount:(userId)=>{
         return new Promise(async(resolve,reject)=>{
-            let cart=await db.get().collection(collection.CART_COLLECTION).findOne({user:ObjectId(userId)})
+            let count=null
+            let cart=await db.get().collection(collection.CART_COLLECTION).findOne({username:ObjectId(userId)})
             if(cart){
-                resolve(cart.products.length)
-
-            }else{
-                resolve()
+                count=cart.products.length
             }
+            resolve(count)
         })
     }
 }

@@ -25,9 +25,16 @@ router.post('/add-products',(req,res)=>{
     let img=req.files.image
      console.log(id)
      img.mv('./public/images/'+id+'.jpg',(err)=>{
-       if(!err){res.render("admin/add-product")}else{console.log("error")}
+       if(!err){
+        productHelper.getAllproducts().then((products)=>{
+          res.render('admin/view-products',{admin:true,products})
+          console.log(products)
+        })
+        }else{
+          console.log("--------------------------------------------error------------------------------")
+        }
      })
-    res.render("./admin/add-products")
+    
   })
 
 });

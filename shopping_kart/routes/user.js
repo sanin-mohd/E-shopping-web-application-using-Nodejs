@@ -1,3 +1,4 @@
+const { ObjectID, ObjectId } = require('bson');
 var express = require('express');
 var router = express.Router();
 var productHelper=require('../helpers/product-helpers')
@@ -17,17 +18,20 @@ const varifyLogin=((req,res,next)=>{
 /* GET home page. */
 router.get('/',async function(req, res, next) {
   let user=req.session.user
-  let cartCount=2
-  console.log('-------------User cart-----'+user);
+  let cartCount=5
+  console.log('-------------User -----'+user);
   if(user){
     cartCount=await userHelpers.getCartCount(user._id)
+     
   }
+  console.log('#################cartCount############'+cartCount);
    
   console.log('-------------------------Logged In User------------------------------')
   console.log(user);
   productHelper.getAllproducts().then((products)=>{
+    console.log('---------------cart products--------------'+products)
     res.render('index',{products,user,cartCount})
-    console.log(products)
+    
   })
   
   
@@ -78,10 +82,13 @@ router.get('/cart',varifyLogin,async(req,res)=>{
   let products=await userHelpers.getCartProduct(req.session.user._id)
   console.log('-----------this is cart items---------');
   console.log(products);
+
   
   res.render('user/cart',{products,user:req.session.user})
 })
 router.get('/add-to-cart/:id',varifyLogin,(req,res)=>{
+ 
+
   userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
     res.redirect('/')
   })

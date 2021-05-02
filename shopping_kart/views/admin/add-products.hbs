@@ -22,7 +22,9 @@
 
                 <div class="form-group">
                     <label for="image">Image</label>
-                    <input type="file" class="form-control" name="image" id="">
+                     <img src="" style="width: 100px; height:130px" alt="" id="newImage">
+                    <input type="file" class="" name="image" id="" value="" onchange="viewImage(event)">
+                    
                 </div>
 
                 <div class="form-group">
@@ -35,3 +37,8 @@
         </div>
     </div>
 </div>
+<script>
+    function viewImage(event){
+        document.getElementById('newImage').src=URL.createObjectURL(event.target.files[0])
+    }
+</script>
