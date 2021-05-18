@@ -14,18 +14,59 @@
     <tbody>
       {{#each products}}
     <tr>
-        {{#each this.product}}
-        <td><img style="width:50px;height:80px" src="/images/{{this._id}}.jpg" alt=""></td>
-        <td>{{this.name}}</td>
-        {{/each}}
-        <td>{{this.price}}</td>
-        <td><button class="cart-item-count mr-3">-</button> {{this.quantity}} <button class="cart-item-count ml-3">+</button></td>
-        <td><a href="#" class="btn btn-danger ">Remove</a></td>
+        
+        <td><img style="width:50px;height:80px" src="/images/{{this.product._id}}.jpg" alt=""></td>
+        <td>{{this.product.name}}</td>
+        
+        <td>Rs.{{this.product.price}}</td>
+        
+        
+        <td><button id="decrementBtn" class="cart-item-count mr-3"onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>
+        <span id="{{this.product._id}}">{{this.quantity}} </span>
+         <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button></td>
+        
+        <td><button class="btn btn-danger " >Remove</button></td>
     </tr>
         {{/each}}
+        
     
   </tbody>
 </table>
-    
+        
+        <hr>
+            <h3 class="float-right">Total Rs. <span id="total">{{totalValue}}</span></h3>
+            <a href="/place-order" style="width: 200px;" class="btn btn-primary float-right mt-4">Place Order</a>
     </div>
 </section>
+<script>
+    
+</script>
+<script>
+    function changeQuantity(cartId,proId,count){
+        let quantity=parseInt(document.getElementById(proId).innerHTML) 
+        count=parseInt(count)
+        $.ajax({
+            url:'/change-product-quantity',
+            data:{
+                cart:cartId,
+                product:proId,
+                count:count,
+                quantity:quantity
+            },
+            method:'post',
+            success:(response)=>{
+                if(response.removeProduct){
+                    alert('porduct removed from cart')
+                    location.reload()
+                }
+                else{
+                    document.getElementById(proId).innerHTML=quantity+count
+                }
+                alert(response)
+
+            }
+        })
+
+    }
+    
+</script>

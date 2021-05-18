@@ -51,5 +51,6 @@ updateProduct:(proId,productDetails)=>{
                 resolve(response)
             })
     })
-}
+},
+
 }

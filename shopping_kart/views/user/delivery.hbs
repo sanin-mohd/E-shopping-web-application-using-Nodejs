@@ -1,0 +1,71 @@
+<section>
+    <div class="container ">
+  <div class="row pt-5 ">
+    
+        
+    <form action="/place-order" method="POST" class="container" id="checkout-form" style="width: 600px;">
+         <h3 class="text-center font-weight-bold">Enter delivery details</h3>
+        <div class="col-md-12 col-12">
+            <div class="  form-group">
+            <label for="address">Address</label>
+             <input type="text" class="form-control" name="address" id="address" placeholder="Enter address">
+    
+             </div>
+            <div class="form-group">
+                 <label for="pincode">Pincode</label>
+                 <input type="text" class="form-control" name="pincode" id="pincode" placeholder="Enter Pincode">
+            </div>
+            <div class="form-group">
+                   <label for="mobile">Mobile</label>
+                  <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Enter mobile">
+                  <input type="text" name="userId" value="{{user._id}}" hidden>
+
+        </div>
+        <div class="col-md-12 col-12 " style="text-align: -moz-center;">
+        
+            <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Total amount: Rs.{{total}}</h5>
+              <hr>
+              <h6 class="card-subtitle mb-2 text-muted">Payment method</h6>
+              <input type="radio" value="COD" name="payment-method"><label for="">COD</label>
+              <br>
+              <input type="radio" value="OnlinePayment" name="payment-method"><label for="">Online payment</label>
+              <br>
+              
+
+            
+              
+            </div>
+            </div>
+        </div>
+         
+        <button  type="submit" class="card-link btn btn-primary float-right">Ckeckout</button>
+    </form>
+    
+  </div>
+
+    
+</div>
+
+</section>
+
+<script>
+    $('#checkout-form').submit((e)=>{
+        e.preventDefault()
+        $.ajax({
+            url:'/place-order',
+            method:'POST',
+            data:$('#checkout-form').serialize(),
+            success:(response)=>{
+                alert(response)
+                if(response.status==true){
+                    location.href='/placedOrder'
+                }
+            }
+        })
+    })
+</script>
+
+    
+

@@ -1,0 +1,47 @@
+<div class="container text-center " style="color: rgb(156, 156, 156) ;">
+    <h1>Your Order Placed Successfully</h1>
+    <h2>Order Summary</h2>
+</div>
+
+<section>
+    <div class="container text-center">
+        
+        <table class="table mt-5">
+  <thead>
+    <tr>
+      
+      <th scope="col">Date</th>
+      <th scope="col">Address</th>
+      <th scope="col">Pincode</th>
+      <th scope="col">Price</th>
+      <th scope="col">paymentMethod</th>
+      <th scope="col">status</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+      {{#each orders}}
+    <tr>
+      
+      <td>{{this.date}}</td>
+      <td>{{this.deliveryDetails.address}}</td>
+      <td>{{this.deliveryDetails.pincode}}</td>
+      <td>{{this.totalprice}}</td>
+      <td>{{this.paymentMethod}}</td>
+      <td>{{this.status}}</td>
+      
+
+    </tr>
+        {{/each}}
+    
+  </tbody>
+</table>
+        
+    </div>
+</section>
+
+    <p style="text-align: center;">Your Order will be delivered within 7 days</p>
+
+
+
+

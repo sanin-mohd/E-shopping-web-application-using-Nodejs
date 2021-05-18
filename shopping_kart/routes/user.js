@@ -1,4 +1,5 @@
 const { ObjectID, ObjectId } = require('bson');
+const { response } = require('express');
 var express = require('express');
 var router = express.Router();
 var productHelper=require('../helpers/product-helpers')
@@ -76,22 +77,59 @@ router.post('/login',(req,res)=>{
 })
 router.get('/logout',(req,res)=>{
   req.session.destroy()
-  res.redirect('/')
+  res.redirect('/login')
 })
 router.get('/cart',varifyLogin,async(req,res)=>{
   let products=await userHelpers.getCartProduct(req.session.user._id)
+  let totalValue=await userHelpers.getTotalAmount(req.session.user._id)
   console.log('-----------this is cart items---------');
   console.log(products);
 
   
-  res.render('user/cart',{products,user:req.session.user})
+  res.render('user/cart',{products,user:req.session.user,totalValue})
 })
-router.get('/add-to-cart/:id',varifyLogin,(req,res)=>{
- 
-
+router.get('/add-to-cart/:id',(req,res)=>{
+  console.log("API Call");
   userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
-    res.redirect('/')
+    res.json({status:true})
+    //res.redirect('/')
   })
+})
+router.post('/change-product-quantity',(req,res,next)=>{
+  console.log("----------body----------")
+  console.log(req.body);
+  userHelpers.changeProductQuantity(req.body).then((response)=>{
+    res.json(response)
+    
+  })
+})
+router.get('/place-order',varifyLogin,async(req,res)=>{
+  let total=await userHelpers.getTotalAmount(req.session.user._id)
+  res.render('user/delivery',{total,user:req.session.user})
+})
+router.post('/place-order',async(req,res)=>{
+  console.log("-----------------this is a post place order call---------------------");
+  console.log(req.body)
+  let products=await userHelpers.getCartProductList(req.body.userId)
+  let totalPrice=await userHelpers.getTotalAmount(req.body.userId)
+  userHelpers.placeOrder(req.body,products,totalPrice).then((orderId)=>{
+    if(req.body[paymentMethod]=='COD'){
+      res.json({status:true})
+
+    }else{
+      userHelpers.generateRazorpay(orderId).then((response)=>{
+
+      })
+
+    }
+      
+  })
+  
+})
+router.get('/placedOrder',varifyLogin,async(req,res)=>{
+  let orders=await userHelpers.getUserOrders(req.session.user._id)
+  
+  res.render('user/placedOrder',{user:req.session.user,orders})
 })
 
 
