@@ -5,7 +5,7 @@ var router = express.Router();
 var productHelper=require('../helpers/product-helpers')
 var userHelpers=require('../helpers/user-helpers')
 const varifyLogin=((req,res,next)=>{
-  if(req.session.loggedIn){
+  if(req.session.user.loggedIn){
     next()
 
   }else{
@@ -38,12 +38,12 @@ router.get('/',async function(req, res, next) {
   
 });
 router.get('/login',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user){
     res.redirect('/')
   }
   else{
-    res.render('./user/login',{loginErr:req.session.loginErr})
-    req.session.loginErr=false
+    res.render('./user/login',{loginErr:req.session.userLoginErr})
+    req.session.userLoginErr=false
 
   }
  
@@ -55,8 +55,9 @@ router.get('/signup',(req,res)=>{
 router.post('/signup',(req,res)=>{
     userHelpers.doSignup(req.body).then((response)=>{
       console.log(response)
-      req.session.loggedIn=true
+      
       req.session.user=response.user
+      req.session.user.loggedIn=true
       res.redirect('/')
     })
 })
@@ -64,19 +65,20 @@ router.post('/login',(req,res)=>{
   console.log(req.body);
   userHelpers.doLogin(req.body).then((response)=>{
     if(response.status)
-    { req.session.loggedIn=true
+    { 
       req.session.user=response.user
+      req.session.user.loggedIn=true
       res.redirect('/')
     }    
     else{
-      req.session.loginErr=true
+      req.session.userLoginErr=true
       res.redirect('/login')
     }
   })
 
 })
 router.get('/logout',(req,res)=>{
-  req.session.destroy()
+  req.session.user=null
   res.redirect('/login')
 })
 router.get('/cart',varifyLogin,async(req,res)=>{
@@ -113,11 +115,12 @@ router.post('/place-order',async(req,res)=>{
   let products=await userHelpers.getCartProductList(req.body.userId)
   let totalPrice=await userHelpers.getTotalAmount(req.body.userId)
   userHelpers.placeOrder(req.body,products,totalPrice).then((orderId)=>{
-    if(req.body[paymentMethod]=='COD'){
-      res.json({status:true})
+    if(req.body['paymentMethod']==='COD'){
+      res.json({codtatus:true})
 
     }else{
-      userHelpers.generateRazorpay(orderId).then((response)=>{
+      userHelpers.generateRazorpay(orderId,totalPrice).then((response)=>{
+        res.json(response)
 
       })
 
@@ -126,11 +129,26 @@ router.post('/place-order',async(req,res)=>{
   })
   
 })
-router.get('/placedOrder',varifyLogin,async(req,res)=>{
+router.get('/placedOrder',async(req,res)=>{
   let orders=await userHelpers.getUserOrders(req.session.user._id)
   
   res.render('user/placedOrder',{user:req.session.user,orders})
 })
+router.post('/verify-payment',((req,res)=>{
+  console.log(req.body);
+  userHelpers.verifyPayment(req.body).then((response)=>{
+    userHelpers.changePaymentStatus(req.body['order[receipt]']).then(()=>{
+      console.log('payment succsess');
+      res.json({status:true})
+    })
+
+  }).catch((err)=>{
+    console.log(err);
+    res.json({status:false})
+  })
+
+
+}))
 
 
 module.exports = router;
