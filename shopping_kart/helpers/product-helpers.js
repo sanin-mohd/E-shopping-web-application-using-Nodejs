@@ -8,6 +8,7 @@ module.exports={
 
 addProduct:(product,callback)=>{
     console.log(product);
+    product.price=parseInt(product.price);
     db.get().collection('product').insertOne(product).then((data)=>{
         console.log(data)
         callback(data.ops[0]._id)
@@ -44,7 +45,7 @@ updateProduct:(proId,productDetails)=>{
             {
                 name:productDetails.name,
                 category:productDetails.category,
-                price:productDetails.price,
+                price:parseInt(productDetails.price),
                 description:productDetails.description
 
             }}).then((response)=>{
