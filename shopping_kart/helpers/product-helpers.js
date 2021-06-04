@@ -41,7 +41,7 @@ getProductDetails:(productId)=>{
 },
 updateProduct:(proId,productDetails)=>{
     return new Promise((resolve,reject)=>{
-        db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:ObjectId},{$set:
+        db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:ObjectId(proId)},{$set:
             {
                 name:productDetails.name,
                 category:productDetails.category,
